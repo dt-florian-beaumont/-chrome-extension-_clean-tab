@@ -1,5 +1,3 @@
-// ─── i18n ─────────────────────────────────────────────────────────────────────
-
 function initI18n() {
   for (const el of document.querySelectorAll("[data-i18n]")) {
     const key = el.dataset.i18n;
@@ -11,20 +9,14 @@ function initI18n() {
   }
 }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 const DEFAULT_SETTINGS = {
   enabled: true,
   inactivityThresholdMs: 3_600_000,
   checkIntervalMinutes: 15,
 };
 
-// Preset threshold values in ms
 const THRESHOLD_PRESETS = new Set([1_800_000, 3_600_000, 7_200_000, 14_400_000]);
-// Preset interval values in minutes
 const INTERVAL_PRESETS = new Set([5, 15, 30, 60]);
-
-// ─── DOM references (resolved once on load) ───────────────────────────────────
 
 const elToggle = /** @type {HTMLInputElement} */ (document.getElementById("toggle-enabled"));
 const elStatTotal = document.getElementById("stat-total");
@@ -38,9 +30,8 @@ const elThresholdCustomWrapper = document.getElementById("threshold-custom-wrapp
 const elThresholdCustomTrigger = document.getElementById("threshold-custom-trigger");
 const elThresholdCustomInput = /** @type {HTMLInputElement} */ (document.getElementById("threshold-custom-input"));
 
-// ─── Settings state ───────────────────────────────────────────────────────────
-
 let currentSettings = { ...DEFAULT_SETTINGS };
+let lastRunTimestamp = null;
 
 async function loadSettings() {
   const { settings } = await chrome.storage.sync.get({ settings: {} });
@@ -51,13 +42,12 @@ async function saveSettings() {
   await chrome.storage.sync.set({ settings: currentSettings });
 }
 
-// ─── Stats display ────────────────────────────────────────────────────────────
-
 function updateStats(stats) {
   elStatTotal.textContent = stats.totalTabs;
   elStatToClose.textContent = stats.tabsToClose;
   elStatToClose.className = `stat-value ${stats.tabsToClose > 0 ? "warning" : "neutral"}`;
-  elLastRun.textContent = formatLastRun(stats.lastRunTimestamp);
+  lastRunTimestamp = stats.lastRunTimestamp;
+  elLastRun.textContent = formatLastRun(lastRunTimestamp);
 }
 
 function formatLastRun(timestamp) {
@@ -71,8 +61,6 @@ function formatLastRun(timestamp) {
   if (diffH === 1) return chrome.i18n.getMessage("last_run_one_hour");
   return chrome.i18n.getMessage("last_run_n_hours", [String(diffH)]);
 }
-
-// ─── Pills renderer ───────────────────────────────────────────────────────────
 
 function highlightThresholdPill(currentValue) {
   const isCustom = !THRESHOLD_PRESETS.has(currentValue);
@@ -97,17 +85,12 @@ function highlightIntervalPill(currentValue) {
   }
 }
 
-// ─── Toggle ───────────────────────────────────────────────────────────────────
-
 elToggle.addEventListener("change", () => {
   currentSettings.enabled = elToggle.checked;
   saveSettings();
 });
 
-// ─── Custom threshold pill ────────────────────────────────────────────────────
-
 elThresholdCustomTrigger.addEventListener("click", () => {
-  // Deactivate preset pills
   for (const pill of elPillsThreshold.querySelectorAll(".pill[data-value]")) {
     pill.classList.remove("active");
   }
@@ -122,18 +105,15 @@ elThresholdCustomInput.addEventListener("change", () => {
   saveSettings();
 });
 
-// ─── Run now button ───────────────────────────────────────────────────────────
-
 elBtnRun.addEventListener("click", async () => {
   elBtnRun.disabled = true;
   elBtnRun.textContent = chrome.i18n.getMessage("toast_running");
 
   try {
     const response = await chrome.runtime.sendMessage({ type: "runNow" });
-    if (!response?.ok) throw new Error(response?.error ?? "Erreur inconnue");
+    if (!response?.ok) throw new Error(response?.error ?? chrome.i18n.getMessage("toast_error"));
     showToast(chrome.i18n.getMessage("toast_done"), "success");
 
-    // Refresh stats after cleanup
     const stats = await chrome.runtime.sendMessage({ type: "getStats" });
     updateStats(stats);
   } catch (err) {
@@ -144,8 +124,6 @@ elBtnRun.addEventListener("click", async () => {
     elBtnRun.textContent = chrome.i18n.getMessage("btn_run_now");
   }
 });
-
-// ─── Toast ────────────────────────────────────────────────────────────────────
 
 let toastTimer = null;
 
@@ -163,16 +141,12 @@ function showToast(message, type) {
   }, 2500);
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
-
 async function init() {
   initI18n();
   await loadSettings();
 
-  // Apply toggle state
   elToggle.checked = currentSettings.enabled;
 
-  // Register pill listeners once
   for (const pill of elPillsThreshold.querySelectorAll(".pill[data-value]")) {
     pill.addEventListener("click", () => {
       currentSettings.inactivityThresholdMs = Number(pill.dataset.value);
@@ -189,11 +163,9 @@ async function init() {
     });
   }
 
-  // Set initial active state
   highlightThresholdPill(currentSettings.inactivityThresholdMs);
   highlightIntervalPill(currentSettings.checkIntervalMinutes);
 
-  // Load stats from background
   try {
     const stats = await chrome.runtime.sendMessage({ type: "getStats" });
     updateStats(stats);
@@ -201,6 +173,10 @@ async function init() {
     elStatTotal.textContent = "—";
     elStatToClose.textContent = "—";
   }
+
+  setInterval(() => {
+    elLastRun.textContent = formatLastRun(lastRunTimestamp);
+  }, 30_000);
 }
 
 init();

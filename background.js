@@ -1,33 +1,18 @@
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 const ALARM_CLEANUP = "cleanup";
 const ALARM_WEEKLY = "weeklyCleanup";
 const BOOKMARK_ROOT_NAME = "TabCleaner";
 
 const DEFAULT_SETTINGS = {
   enabled: true,
-  inactivityThresholdMs: 3_600_000, // 1 hour
+  inactivityThresholdMs: 3_600_000,
   checkIntervalMinutes: 15,
 };
 
-// ─── Settings ─────────────────────────────────────────────────────────────────
-
-/**
- * Loads settings from sync storage, merging with defaults.
- * @returns {Promise<typeof DEFAULT_SETTINGS>}
- */
 async function getSettings() {
   const { settings } = await chrome.storage.sync.get({ settings: {} });
   return { ...DEFAULT_SETTINGS, ...settings };
 }
 
-// ─── Alarm management ─────────────────────────────────────────────────────────
-
-/**
- * Creates or updates alarms based on current settings.
- * Idempotent: safe to call multiple times.
- * @param {typeof DEFAULT_SETTINGS} settings
- */
 async function ensureAlarmsExist(settings) {
   const [cleanupAlarm, weeklyAlarm] = await Promise.all([
     chrome.alarms.get(ALARM_CLEANUP),
@@ -49,27 +34,12 @@ async function ensureAlarmsExist(settings) {
   }
 }
 
-// ─── Tab access tracking ──────────────────────────────────────────────────────
-
-/**
- * Records the current timestamp for a tab as its last access time.
- * @param {number} tabId
- */
 async function trackTabAccess(tabId) {
   const { tabAccessTimes } = await chrome.storage.local.get({ tabAccessTimes: {} });
   tabAccessTimes[tabId] = Date.now();
   await chrome.storage.local.set({ tabAccessTimes });
 }
 
-// ─── Bookmark folder management ───────────────────────────────────────────────
-
-/**
- * Finds an existing bookmark folder by name under a given parent,
- * or creates it if it doesn't exist.
- * @param {string} parentId
- * @param {string} name
- * @returns {Promise<string>} The folder's bookmark ID
- */
 async function findOrCreateFolder(parentId, name) {
   const children = await chrome.bookmarks.getChildren(parentId);
   const existing = children.find((node) => node.title === name && !node.url);
@@ -79,15 +49,9 @@ async function findOrCreateFolder(parentId, name) {
   return created.id;
 }
 
-/**
- * Returns the ID of the TabCleaner root bookmark folder, creating it if needed.
- * Caches the ID in local storage to avoid repeated searches.
- * @returns {Promise<string>}
- */
 async function getOrCreateRootFolder() {
   const { tabCleanerFolderId } = await chrome.storage.local.get({ tabCleanerFolderId: null });
 
-  // Verify cached ID is still a valid, usable parent folder
   if (tabCleanerFolderId) {
     try {
       await chrome.bookmarks.getChildren(tabCleanerFolderId);
@@ -98,7 +62,6 @@ async function getOrCreateRootFolder() {
     }
   }
 
-  // Search for an existing TabCleaner folder anywhere in the tree
   const results = await chrome.bookmarks.search({ title: BOOKMARK_ROOT_NAME });
   const existing = results.find((node) => !node.url);
   if (existing) {
@@ -120,22 +83,10 @@ async function getOrCreateRootFolder() {
   return folderId;
 }
 
-/**
- * Returns today's date string as "YYYY-MM-DD".
- * @returns {string}
- */
 function todayString() {
   return new Date().toISOString().slice(0, 10);
 }
 
-// ─── Core cleanup ─────────────────────────────────────────────────────────────
-
-/**
- * Saves a tab to bookmarks then closes it.
- * If the bookmark fails, the tab is NOT closed (safety first).
- * @param {chrome.tabs.Tab} tab
- * @param {string} folderId  Bookmark folder ID for today's date
- */
 async function bookmarkAndClose(tab, folderId) {
   try {
     await chrome.bookmarks.create({
@@ -145,7 +96,7 @@ async function bookmarkAndClose(tab, folderId) {
     });
   } catch (err) {
     console.error(`[TabCleaner] Failed to bookmark tab ${tab.id} (${tab.url}):`, err);
-    return; // Do not close the tab if bookmarking failed
+    return;
   }
 
   try {
@@ -156,9 +107,6 @@ async function bookmarkAndClose(tab, folderId) {
   }
 }
 
-/**
- * Main cleanup cycle: finds inactive tabs, bookmarks and closes them.
- */
 async function runCleanup() {
   const [settings, { tabAccessTimes: storedTimes }, allTabs, activeTabs] = await Promise.all([
     getSettings(),
@@ -171,10 +119,8 @@ async function runCleanup() {
 
   const activeTabIds = new Set(activeTabs.map((t) => t.id));
   const now = Date.now();
-  const tabAccessTimes = storedTimes ?? {};
-  let didUpdate = false;
+  const tabAccessTimes = storedTimes;
 
-  // Lazily get the bookmark folder only when we actually need to close a tab
   let todayFolderId = null;
   async function getTodayFolder() {
     if (todayFolderId) return todayFolderId;
@@ -184,7 +130,6 @@ async function runCleanup() {
   }
 
   for (const tab of allTabs) {
-    // Skip pinned, active, and internal Chrome pages
     if (
       tab.pinned ||
       activeTabIds.has(tab.id) ||
@@ -201,7 +146,6 @@ async function runCleanup() {
       // First time we see this tab — record it now and skip this cycle.
       // Closing a tab we've never seen is too aggressive.
       tabAccessTimes[tab.id] = now;
-      didUpdate = true;
       continue;
     }
 
@@ -209,7 +153,6 @@ async function runCleanup() {
       const folderId = await getTodayFolder();
       await bookmarkAndClose(tab, folderId);
       delete tabAccessTimes[tab.id];
-      didUpdate = true;
     }
   }
 
@@ -218,7 +161,6 @@ async function runCleanup() {
   for (const key of Object.keys(tabAccessTimes)) {
     if (!liveTabIds.has(key)) {
       delete tabAccessTimes[key];
-      didUpdate = true;
     }
   }
 
@@ -228,11 +170,6 @@ async function runCleanup() {
   });
 }
 
-// ─── Weekly bookmark cleanup ──────────────────────────────────────────────────
-
-/**
- * Removes date sub-folders in the TabCleaner folder that are older than 7 days.
- */
 async function runBookmarkCleanup() {
   let rootId;
   try {
@@ -260,13 +197,6 @@ async function runBookmarkCleanup() {
   }
 }
 
-// ─── Stats ────────────────────────────────────────────────────────────────────
-
-/**
- * Computes stats for display in the popup.
- * @param {typeof DEFAULT_SETTINGS} settings
- * @returns {Promise<{ totalTabs: number, tabsToClose: number, lastRunTimestamp: number|null }>}
- */
 async function getStats(settings) {
   const [allTabs, activeTabs, { tabAccessTimes, lastRunTimestamp }] = await Promise.all([
     chrome.tabs.query({}),
@@ -298,11 +228,9 @@ async function getStats(settings) {
   return {
     totalTabs: allTabs.length,
     tabsToClose,
-    lastRunTimestamp: lastRunTimestamp ?? null,
+    lastRunTimestamp: lastRunTimestamp,
   };
 }
-
-// ─── Top-level listeners (must be synchronous, MV3 requirement) ───────────────
 
 chrome.runtime.onInstalled.addListener(async () => {
   try {
@@ -341,7 +269,6 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-// Recreate cleanup alarm if interval setting changes
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== "sync" || !changes.settings) return;
   const newSettings = changes.settings.newValue;
