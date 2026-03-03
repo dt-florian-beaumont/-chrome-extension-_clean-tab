@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TabCleaner</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <img class="header-icon" src="icons/icon48.png" alt="" />
+      <h1>TabCleaner</h1>
+    </div>
+    <label class="toggle" title="Activer / désactiver">
+      <input type="checkbox" id="toggle-enabled" />
+      <span class="toggle-track"></span>
+      <span class="toggle-thumb"></span>
+    </label>
+  </header>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="stat-row">
+      <span class="stat-label">Onglets ouverts</span>
+      <span class="stat-value neutral" id="stat-total">—</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">Seront fermés</span>
+      <span class="stat-value neutral" id="stat-to-close">—</span>
+    </div>
+  </section>
+
+  <!-- Settings -->
+  <section class="settings">
+
+    <div class="setting-group">
+      <label>Inactivité avant fermeture</label>
+      <div class="pills" id="pills-threshold">
+        <button class="pill" data-value="1800000">30 min</button>
+        <button class="pill" data-value="3600000">1 h</button>
+        <button class="pill" data-value="7200000">2 h</button>
+        <button class="pill" data-value="14400000">4 h</button>
+        <span class="pill-custom-wrapper" id="threshold-custom-wrapper">
+          <button class="pill" id="threshold-custom-trigger">Perso.</button>
+          <input
+            class="custom-input"
+            id="threshold-custom-input"
+            type="number"
+            min="1"
+            max="999"
+            placeholder="min"
+            title="Seuil en minutes"
+          />
+        </span>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <label>Vérifier toutes les</label>
+      <div class="pills" id="pills-interval">
+        <button class="pill" data-value="5">5 min</button>
+        <button class="pill" data-value="15">15 min</button>
+        <button class="pill" data-value="30">30 min</button>
+        <button class="pill" data-value="60">1 h</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <button class="btn-run" id="btn-run">Nettoyer maintenant</button>
+    <p class="last-run" id="last-run">Jamais exécuté</p>
+  </footer>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
