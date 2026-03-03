@@ -1,0 +1,58 @@
+{
+  "ext_description": {
+    "message": "Cierra autom\u00e1ticamente las pesta\u00f1as inactivas y las guarda en favoritos."
+  },
+  "toggle_title": {
+    "message": "Activar / desactivar"
+  },
+  "stat_open_tabs": {
+    "message": "Pesta\u00f1as abiertas"
+  },
+  "stat_will_close": {
+    "message": "Se cerrar\u00e1n"
+  },
+  "setting_inactivity_label": {
+    "message": "Inactividad antes de cerrar"
+  },
+  "pill_custom": {
+    "message": "Personaliz."
+  },
+  "custom_input_title": {
+    "message": "Umbral en minutos"
+  },
+  "setting_interval_label": {
+    "message": "Verificar cada"
+  },
+  "btn_run_now": {
+    "message": "Limpiar ahora"
+  },
+  "last_run_never": {
+    "message": "Nunca ejecutado"
+  },
+  "last_run_just_now": {
+    "message": "Hace un momento"
+  },
+  "last_run_one_minute": {
+    "message": "Hace 1 minuto"
+  },
+  "last_run_n_minutes": {
+    "message": "Hace $DIFF$ minutos",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "last_run_one_hour": {
+    "message": "Hace 1 hora"
+  },
+  "last_run_n_hours": {
+    "message": "Hace $DIFF$ horas",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "toast_running": {
+    "message": "Limpieza en curso\u2026"
+  },
+  "toast_done": {
+    "message": "\u00a1Limpieza completada!"
+  },
+  "toast_error": {
+    "message": "Error durante la limpieza."
+  }
+}

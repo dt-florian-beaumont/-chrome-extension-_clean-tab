@@ -1,0 +1,58 @@
+{
+  "ext_description": {
+    "message": "Chiude automaticamente le schede inattive e le salva nei preferiti."
+  },
+  "toggle_title": {
+    "message": "Attiva / disattiva"
+  },
+  "stat_open_tabs": {
+    "message": "Schede aperte"
+  },
+  "stat_will_close": {
+    "message": "Verranno chiuse"
+  },
+  "setting_inactivity_label": {
+    "message": "Inattivit\u00e0 prima della chiusura"
+  },
+  "pill_custom": {
+    "message": "Perso."
+  },
+  "custom_input_title": {
+    "message": "Soglia in minuti"
+  },
+  "setting_interval_label": {
+    "message": "Controlla ogni"
+  },
+  "btn_run_now": {
+    "message": "Pulisci ora"
+  },
+  "last_run_never": {
+    "message": "Mai eseguito"
+  },
+  "last_run_just_now": {
+    "message": "Poco fa"
+  },
+  "last_run_one_minute": {
+    "message": "1 minuto fa"
+  },
+  "last_run_n_minutes": {
+    "message": "$DIFF$ minuti fa",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "last_run_one_hour": {
+    "message": "1 ora fa"
+  },
+  "last_run_n_hours": {
+    "message": "$DIFF$ ore fa",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "toast_running": {
+    "message": "Pulizia in corso\u2026"
+  },
+  "toast_done": {
+    "message": "Pulizia completata!"
+  },
+  "toast_error": {
+    "message": "Errore durante la pulizia."
+  }
+}

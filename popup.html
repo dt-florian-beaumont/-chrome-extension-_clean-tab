@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,7 +14,7 @@
       <img class="header-icon" src="icons/icon48.png" alt="" />
       <h1>TabCleaner</h1>
     </div>
-    <label class="toggle" title="Activer / désactiver">
+    <label class="toggle" data-i18n="toggle_title" data-i18n-attr="title">
       <input type="checkbox" id="toggle-enabled" />
       <span class="toggle-track"></span>
       <span class="toggle-thumb"></span>
@@ -24,11 +24,11 @@
   <!-- Stats -->
   <section class="stats">
     <div class="stat-row">
-      <span class="stat-label">Onglets ouverts</span>
+      <span class="stat-label" data-i18n="stat_open_tabs"></span>
       <span class="stat-value neutral" id="stat-total">—</span>
     </div>
     <div class="stat-row">
-      <span class="stat-label">Seront fermés</span>
+      <span class="stat-label" data-i18n="stat_will_close"></span>
       <span class="stat-value neutral" id="stat-to-close">—</span>
     </div>
   </section>
@@ -37,14 +37,14 @@
   <section class="settings">
 
     <div class="setting-group">
-      <label>Inactivité avant fermeture</label>
+      <label data-i18n="setting_inactivity_label"></label>
       <div class="pills" id="pills-threshold">
         <button class="pill" data-value="1800000">30 min</button>
         <button class="pill" data-value="3600000">1 h</button>
         <button class="pill" data-value="7200000">2 h</button>
         <button class="pill" data-value="14400000">4 h</button>
         <span class="pill-custom-wrapper" id="threshold-custom-wrapper">
-          <button class="pill" id="threshold-custom-trigger">Perso.</button>
+          <button class="pill" id="threshold-custom-trigger" data-i18n="pill_custom"></button>
           <input
             class="custom-input"
             id="threshold-custom-input"
@@ -52,14 +52,14 @@
             min="1"
             max="999"
             placeholder="min"
-            title="Seuil en minutes"
+            data-i18n="custom_input_title" data-i18n-attr="title"
           />
         </span>
       </div>
     </div>
 
     <div class="setting-group">
-      <label>Vérifier toutes les</label>
+      <label data-i18n="setting_interval_label"></label>
       <div class="pills" id="pills-interval">
         <button class="pill" data-value="5">5 min</button>
         <button class="pill" data-value="15">15 min</button>
@@ -72,8 +72,8 @@
 
   <!-- Footer -->
   <footer class="footer">
-    <button class="btn-run" id="btn-run">Nettoyer maintenant</button>
-    <p class="last-run" id="last-run">Jamais exécuté</p>
+    <button class="btn-run" id="btn-run" data-i18n="btn_run_now"></button>
+    <p class="last-run" id="last-run"></p>
   </footer>
 
   <!-- Toast notification -->

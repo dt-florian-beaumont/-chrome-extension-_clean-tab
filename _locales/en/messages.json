@@ -1,0 +1,58 @@
+{
+  "ext_description": {
+    "message": "Automatically closes inactive tabs and saves them to bookmarks."
+  },
+  "toggle_title": {
+    "message": "Enable / disable"
+  },
+  "stat_open_tabs": {
+    "message": "Open tabs"
+  },
+  "stat_will_close": {
+    "message": "Will be closed"
+  },
+  "setting_inactivity_label": {
+    "message": "Inactivity before closing"
+  },
+  "pill_custom": {
+    "message": "Custom"
+  },
+  "custom_input_title": {
+    "message": "Threshold in minutes"
+  },
+  "setting_interval_label": {
+    "message": "Check every"
+  },
+  "btn_run_now": {
+    "message": "Clean now"
+  },
+  "last_run_never": {
+    "message": "Never run"
+  },
+  "last_run_just_now": {
+    "message": "Just now"
+  },
+  "last_run_one_minute": {
+    "message": "1 minute ago"
+  },
+  "last_run_n_minutes": {
+    "message": "$DIFF$ minutes ago",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "last_run_one_hour": {
+    "message": "1 hour ago"
+  },
+  "last_run_n_hours": {
+    "message": "$DIFF$ hours ago",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "toast_running": {
+    "message": "Cleaning in progress\u2026"
+  },
+  "toast_done": {
+    "message": "Cleaning complete!"
+  },
+  "toast_error": {
+    "message": "Error during cleaning."
+  }
+}

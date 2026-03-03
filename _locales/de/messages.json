@@ -1,0 +1,58 @@
+{
+  "ext_description": {
+    "message": "Schlie\u00dft automatisch inaktive Tabs und speichert sie in den Lesezeichen."
+  },
+  "toggle_title": {
+    "message": "Aktivieren / deaktivieren"
+  },
+  "stat_open_tabs": {
+    "message": "Offene Tabs"
+  },
+  "stat_will_close": {
+    "message": "Werden geschlossen"
+  },
+  "setting_inactivity_label": {
+    "message": "Inaktivit\u00e4t vor dem Schlie\u00dfen"
+  },
+  "pill_custom": {
+    "message": "Benutzerd."
+  },
+  "custom_input_title": {
+    "message": "Schwellenwert in Minuten"
+  },
+  "setting_interval_label": {
+    "message": "\u00dcberpr\u00fcfen alle"
+  },
+  "btn_run_now": {
+    "message": "Jetzt bereinigen"
+  },
+  "last_run_never": {
+    "message": "Nie ausgef\u00fchrt"
+  },
+  "last_run_just_now": {
+    "message": "Gerade eben"
+  },
+  "last_run_one_minute": {
+    "message": "Vor 1 Minute"
+  },
+  "last_run_n_minutes": {
+    "message": "Vor $DIFF$ Minuten",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "last_run_one_hour": {
+    "message": "Vor 1 Stunde"
+  },
+  "last_run_n_hours": {
+    "message": "Vor $DIFF$ Stunden",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "toast_running": {
+    "message": "Bereinigung l\u00e4uft\u2026"
+  },
+  "toast_done": {
+    "message": "Bereinigung abgeschlossen!"
+  },
+  "toast_error": {
+    "message": "Fehler bei der Bereinigung."
+  }
+}

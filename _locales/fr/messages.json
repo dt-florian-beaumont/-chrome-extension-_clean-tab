@@ -1,0 +1,58 @@
+{
+  "ext_description": {
+    "message": "Ferme automatiquement les onglets inactifs et les sauvegarde dans les favoris."
+  },
+  "toggle_title": {
+    "message": "Activer / d\u00e9sactiver"
+  },
+  "stat_open_tabs": {
+    "message": "Onglets ouverts"
+  },
+  "stat_will_close": {
+    "message": "Seront ferm\u00e9s"
+  },
+  "setting_inactivity_label": {
+    "message": "Inactivit\u00e9 avant fermeture"
+  },
+  "pill_custom": {
+    "message": "Perso."
+  },
+  "custom_input_title": {
+    "message": "Seuil en minutes"
+  },
+  "setting_interval_label": {
+    "message": "V\u00e9rifier toutes les"
+  },
+  "btn_run_now": {
+    "message": "Nettoyer maintenant"
+  },
+  "last_run_never": {
+    "message": "Jamais ex\u00e9cut\u00e9"
+  },
+  "last_run_just_now": {
+    "message": "Il y a moins d\u2019une minute"
+  },
+  "last_run_one_minute": {
+    "message": "Il y a 1 minute"
+  },
+  "last_run_n_minutes": {
+    "message": "Il y a $DIFF$ minutes",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "last_run_one_hour": {
+    "message": "Il y a 1 heure"
+  },
+  "last_run_n_hours": {
+    "message": "Il y a $DIFF$ heures",
+    "placeholders": { "diff": { "content": "$1" } }
+  },
+  "toast_running": {
+    "message": "Nettoyage en cours\u2026"
+  },
+  "toast_done": {
+    "message": "Nettoyage termin\u00e9 !"
+  },
+  "toast_error": {
+    "message": "Erreur lors du nettoyage."
+  }
+}

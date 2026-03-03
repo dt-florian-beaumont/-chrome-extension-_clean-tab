@@ -87,13 +87,14 @@ async function findOrCreateFolder(parentId, name) {
 async function getOrCreateRootFolder() {
   const { tabCleanerFolderId } = await chrome.storage.local.get({ tabCleanerFolderId: null });
 
-  // Verify cached ID still points to a valid folder
+  // Verify cached ID is still a valid, usable parent folder
   if (tabCleanerFolderId) {
     try {
-      const nodes = await chrome.bookmarks.get(tabCleanerFolderId);
-      if (nodes.length > 0 && !nodes[0].url) return tabCleanerFolderId;
+      await chrome.bookmarks.getChildren(tabCleanerFolderId);
+      return tabCleanerFolderId;
     } catch {
-      // Folder was deleted; fall through to recreate
+      // Folder was deleted or ID is stale (e.g. after sync); fall through to recreate
+      await chrome.storage.local.remove("tabCleanerFolderId");
     }
   }
 

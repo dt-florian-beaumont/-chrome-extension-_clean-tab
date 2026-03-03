@@ -1,3 +1,16 @@
+// ─── i18n ─────────────────────────────────────────────────────────────────────
+
+function initI18n() {
+  for (const el of document.querySelectorAll("[data-i18n]")) {
+    const key = el.dataset.i18n;
+    const attr = el.dataset.i18nAttr;
+    const msg = chrome.i18n.getMessage(key);
+    if (!msg) continue;
+    if (attr) el.setAttribute(attr, msg);
+    else el.textContent = msg;
+  }
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const DEFAULT_SETTINGS = {
@@ -48,15 +61,15 @@ function updateStats(stats) {
 }
 
 function formatLastRun(timestamp) {
-  if (!timestamp) return "Jamais exécuté";
+  if (!timestamp) return chrome.i18n.getMessage("last_run_never");
   const diffMs = Date.now() - timestamp;
   const diffMin = Math.floor(diffMs / 60_000);
-  if (diffMin < 1) return "Il y a moins d'une minute";
-  if (diffMin === 1) return "Il y a 1 minute";
-  if (diffMin < 60) return `Il y a ${diffMin} minutes`;
+  if (diffMin < 1) return chrome.i18n.getMessage("last_run_just_now");
+  if (diffMin === 1) return chrome.i18n.getMessage("last_run_one_minute");
+  if (diffMin < 60) return chrome.i18n.getMessage("last_run_n_minutes", [String(diffMin)]);
   const diffH = Math.floor(diffMin / 60);
-  if (diffH === 1) return "Il y a 1 heure";
-  return `Il y a ${diffH} heures`;
+  if (diffH === 1) return chrome.i18n.getMessage("last_run_one_hour");
+  return chrome.i18n.getMessage("last_run_n_hours", [String(diffH)]);
 }
 
 // ─── Pills renderer ───────────────────────────────────────────────────────────
@@ -113,22 +126,22 @@ elThresholdCustomInput.addEventListener("change", () => {
 
 elBtnRun.addEventListener("click", async () => {
   elBtnRun.disabled = true;
-  elBtnRun.textContent = "Nettoyage en cours…";
+  elBtnRun.textContent = chrome.i18n.getMessage("toast_running");
 
   try {
     const response = await chrome.runtime.sendMessage({ type: "runNow" });
     if (!response?.ok) throw new Error(response?.error ?? "Erreur inconnue");
-    showToast("Nettoyage terminé !", "success");
+    showToast(chrome.i18n.getMessage("toast_done"), "success");
 
     // Refresh stats after cleanup
     const stats = await chrome.runtime.sendMessage({ type: "getStats" });
     updateStats(stats);
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
-    showToast(detail || "Erreur lors du nettoyage.", "");
+    showToast(detail || chrome.i18n.getMessage("toast_error"), "");
   } finally {
     elBtnRun.disabled = false;
-    elBtnRun.textContent = "Nettoyer maintenant";
+    elBtnRun.textContent = chrome.i18n.getMessage("btn_run_now");
   }
 });
 
@@ -153,6 +166,7 @@ function showToast(message, type) {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 async function init() {
+  initI18n();
   await loadSettings();
 
   // Apply toggle state
